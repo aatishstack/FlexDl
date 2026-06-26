@@ -1,0 +1,6 @@
+{
+  "name": "FlexDL",
+  "description": "Fast video and audio downloader from popular public platforms with a premium dark interface.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
