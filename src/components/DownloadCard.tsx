@@ -15,7 +15,6 @@ interface DownloadCardProps {
 
 export default function DownloadCard({ metadata, id = "download-card" }: DownloadCardProps) {
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
-  const [downloadProgress, setDownloadProgress] = useState<number>(0);
   const [downloadStatus, setDownloadStatus] = useState<string>('');
 
   const getPlatformDetails = (platform: string) => {
@@ -35,28 +34,11 @@ export default function DownloadCard({ metadata, id = "download-card" }: Downloa
 
   const platformInfo = getPlatformDetails(metadata.platform);
 
-  // Custom high-fidelity download triggers
-  const handleDownload = async (format: VideoFormat) => {
+  const handleDownload = (format: VideoFormat) => {
     if (downloadingId) return;
 
     setDownloadingId(format.id);
-    setDownloadProgress(0);
-    setDownloadStatus('Connecting to source...');
-
-    // Smoothly animate extraction progress
-    const steps = [
-      { progress: 15, status: 'Initializing handshakes...' },
-      { progress: 40, status: 'Bypassing restriction gates...' },
-      { progress: 68, status: 'Extracting media container...' },
-      { progress: 85, status: 'Preparing download stream...' },
-      { progress: 100, status: 'Streaming to your device!' }
-    ];
-
-    for (let i = 0; i < steps.length; i++) {
-      await new Promise((resolve) => setTimeout(resolve, i === 0 ? 300 : i === 2 ? 500 : 250));
-      setDownloadProgress(steps[i].progress);
-      setDownloadStatus(steps[i].status);
-    }
+    setDownloadStatus('Initiating download stream...');
 
     // Trigger the real file streaming endpoint
     // This allows browser download manager to grab it natively without blocking the page
@@ -65,9 +47,8 @@ export default function DownloadCard({ metadata, id = "download-card" }: Downloa
     // Wait a brief period then clear downloading state
     setTimeout(() => {
       setDownloadingId(null);
-      setDownloadProgress(0);
       setDownloadStatus('');
-    }, 1500);
+    }, 2000);
   };
 
   const videoFormats = metadata.formats.filter(f => f.type === 'video');
@@ -157,14 +138,6 @@ export default function DownloadCard({ metadata, id = "download-card" }: Downloa
                             : 'bg-neutral-950/60 border-neutral-900 text-neutral-300 hover:border-brand/40 hover:bg-neutral-950/80 hover:text-white'
                         }`}
                       >
-                        {/* Shimmer loading bar inside current downloading button */}
-                        {isCurrentDownloading && (
-                          <div 
-                            className="absolute top-0 left-0 bottom-0 bg-brand/10 transition-all duration-300"
-                            style={{ width: `${downloadProgress}%` }}
-                          />
-                        )}
-
                         <div className="relative z-10 flex items-center gap-3">
                           <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
                             isCurrentDownloading ? 'bg-brand/20 text-brand' : 'bg-neutral-900 text-neutral-400'
@@ -179,7 +152,7 @@ export default function DownloadCard({ metadata, id = "download-card" }: Downloa
 
                         <div className="relative z-10">
                           {isCurrentDownloading ? (
-                            <span className="text-xs font-mono font-semibold text-purple-400">{downloadProgress}%</span>
+                            <span className="text-xs font-mono font-semibold text-purple-400">Downloading...</span>
                           ) : (
                             <Download className="w-4 h-4 text-neutral-500 group-hover:text-purple-400 transition-colors" />
                           )}
@@ -214,14 +187,6 @@ export default function DownloadCard({ metadata, id = "download-card" }: Downloa
                             : 'bg-neutral-950/60 border-neutral-900 text-neutral-300 hover:border-brand/40 hover:bg-neutral-950/80 hover:text-white'
                         }`}
                       >
-                        {/* Shimmer loading bar inside current downloading button */}
-                        {isCurrentDownloading && (
-                          <div 
-                            className="absolute top-0 left-0 bottom-0 bg-brand/10 transition-all duration-300"
-                            style={{ width: `${downloadProgress}%` }}
-                          />
-                        )}
-
                         <div className="relative z-10 flex items-center gap-3">
                           <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
                             isCurrentDownloading ? 'bg-brand/20 text-brand' : 'bg-neutral-900 text-neutral-400'
@@ -236,7 +201,7 @@ export default function DownloadCard({ metadata, id = "download-card" }: Downloa
 
                         <div className="relative z-10">
                           {isCurrentDownloading ? (
-                            <span className="text-xs font-mono font-semibold text-purple-400">{downloadProgress}%</span>
+                            <span className="text-xs font-mono font-semibold text-purple-400">Downloading...</span>
                           ) : (
                             <Download className="w-4 h-4 text-neutral-500 group-hover:text-purple-400 transition-colors" />
                           )}
@@ -255,9 +220,6 @@ export default function DownloadCard({ metadata, id = "download-card" }: Downloa
               <Loader2 className="w-4 h-4 text-purple-400 animate-spin shrink-0" />
               <div className="flex-1 min-w-0">
                 <p className="text-xs font-medium text-neutral-200 truncate">{downloadStatus}</p>
-                <div className="w-full bg-neutral-900 h-1 rounded-full mt-1.5 overflow-hidden">
-                  <div className="bg-brand h-full rounded-full transition-all duration-300" style={{ width: `${downloadProgress}%` }} />
-                </div>
               </div>
             </div>
           )}

@@ -5,15 +5,16 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  ArrowRight, Search, X, AlertCircle, Loader2, Sparkles, 
-  Menu, ShieldCheck, Mail, Send, CheckCircle 
-} from 'lucide-react';
+import { AlertCircle, Loader2, X, Mail, CheckCircle, Send } from 'lucide-react';
 
 import SeoMeta from './components/SeoMeta';
 import AdPlaceholder from './components/AdPlaceholder';
 import DownloadCard from './components/DownloadCard';
 import FaqSection from './components/FaqSection';
+import Navbar from './components/Navbar';
+import Hero from './components/Hero';
+import DownloadForm from './components/DownloadForm';
+import Footer from './components/Footer';
 import { VideoMetadata } from './types';
 
 export default function App() {
@@ -27,23 +28,10 @@ export default function App() {
   const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
   const [isContactOpen, setIsContactOpen] = useState(false);
 
-  // Simple Contact form state
+  // Contact support state
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [contactSuccess, setContactSuccess] = useState(false);
-
-  // Quick platform examples to make testing incredibly fun and fast with real public media paths!
-  const platformExamples = [
-    { name: 'Sample Video 1', example: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4' },
-    { name: 'Sample Video 2', example: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4' },
-    { name: 'Sample Video 3', example: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4' },
-    { name: 'Sample Audio Track', example: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' }
-  ];
-
-  const handleExampleClick = (exampleUrl: string) => {
-    setUrl(exampleUrl);
-    triggerParsing(exampleUrl);
-  };
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,38 +85,22 @@ export default function App() {
     }, 2000);
   };
 
+  const resetAllState = () => {
+    setUrl('');
+    setMetadata(null);
+    setError(null);
+  };
+
   return (
     <div className="min-h-screen bg-black text-neutral-100 flex flex-col justify-between selection:bg-brand/30 selection:text-white">
       {/* Dynamic dynamic head tag injector */}
       <SeoMeta />
 
       {/* Top Header Section */}
-      <header className="sticky top-0 z-50 bg-black/60 backdrop-blur-md border-b border-neutral-900/50">
-        <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
-          {/* Logo brand */}
-          <div className="flex items-center gap-2.5 group cursor-pointer" onClick={() => { setUrl(''); setMetadata(null); setError(null); }}>
-            <div className="w-8 h-8 rounded-lg bg-brand flex items-center justify-center text-white font-extrabold shadow-md shadow-brand/20 group-hover:scale-105 transition-transform">
-              <Sparkles className="w-4 h-4 fill-white animate-pulse" />
-            </div>
-            <span className="font-extrabold text-base md:text-lg text-white tracking-tight group-hover:text-purple-400 transition-colors">
-              Flex<span className="text-brand">DL</span>
-            </span>
-          </div>
-
-          {/* Minimal Links */}
-          <nav className="flex items-center gap-5 text-xs font-semibold">
-            <a href="#faq" className="text-neutral-400 hover:text-white transition-colors duration-200">
-              FAQ
-            </a>
-            <button 
-              onClick={() => setIsContactOpen(true)}
-              className="px-3 py-1 rounded-full bg-brand/10 border border-brand/20 text-brand text-xs font-bold hover:bg-brand/20 hover:text-white transition-all duration-300"
-            >
-              Contact
-            </button>
-          </nav>
-        </div>
-      </header>
+      <Navbar 
+        onBrandClick={resetAllState} 
+        onContactClick={() => setIsContactOpen(true)} 
+      />
 
       {/* Main Page Layout */}
       <main className="flex-1 w-full max-w-4xl mx-auto px-4 py-4 md:py-8">
@@ -136,135 +108,15 @@ export default function App() {
         <AdPlaceholder position="top-banner" id="ad-top" />
 
         {/* Hero Section */}
-        <div className="text-center max-w-3xl mx-auto mt-2 md:mt-4 mb-6">
-          <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-purple-950/20 border border-brand/30 text-[10px] font-bold text-purple-400 tracking-wider uppercase mb-3 select-none">
-              <ShieldCheck className="w-3 h-3" /> Fast, Secure & Anonymous
-            </span>
-          </motion.div>
-
-          <motion.h1 
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
-            className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-[1.1]"
-          >
-            Fast Video <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand to-purple-400">Downloader</span>
-          </motion.h1>
-
-          <motion.p 
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-            className="text-xs sm:text-sm text-neutral-400 mt-2 leading-relaxed max-w-lg mx-auto"
-          >
-            Extract and stream clean multimedia formats directly from supported links.
-          </motion.p>
-        </div>
+        <Hero />
 
         {/* Input Bar Section */}
-        <div className="max-w-3xl mx-auto mb-4 relative z-20">
-          <motion.form 
-            onSubmit={handleFormSubmit}
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.4, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="glassmorphism p-1.5 rounded-2xl flex flex-col sm:flex-row gap-2 relative group"
-          >
-            <div className="absolute inset-0 bg-brand/5 group-focus-within:bg-brand/[0.08] transition-all duration-300 rounded-2xl pointer-events-none" />
-            
-            {/* Search Input Container */}
-            <div className="flex-1 flex items-center pl-2.5 relative z-10">
-              <Search className="w-4 h-4 text-neutral-500 group-focus-within:text-purple-400 shrink-0 transition-colors" />
-              <input
-                id="url-input"
-                type="url"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                placeholder="Paste your video URL here..."
-                className="w-full h-11 md:h-12 pl-2.5 bg-transparent border-0 text-white placeholder-neutral-500 text-xs md:text-sm focus:ring-0 focus:outline-none focus:border-0"
-              />
-              {url && (
-                <button
-                  type="button"
-                  id="btn-clear-input"
-                  onClick={() => setUrl('')}
-                  className="p-1 rounded-lg text-neutral-500 hover:text-neutral-300 hover:bg-neutral-900 shrink-0 mr-1 transition-all"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              )}
-            </div>
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              id="btn-submit-download"
-              disabled={isLoading}
-              className="h-11 md:h-12 px-6 rounded-xl bg-brand hover:bg-brand-hover text-white text-xs md:text-sm font-bold shadow-lg shadow-brand/10 hover:shadow-brand/20 active:scale-98 transition-all shrink-0 flex items-center justify-center gap-1.5 select-none"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Extracting...
-                </>
-              ) : (
-                <>
-                  Download
-                  <ArrowRight className="w-3.5 h-3.5 shrink-0" />
-                </>
-              )}
-            </button>
-          </motion.form>
-
-          {/* Quick Examples Badges */}
-          <div className="mt-3 flex flex-wrap items-center justify-center gap-1.5">
-            <span className="text-[10px] font-bold text-neutral-500 mr-0.5 select-none uppercase tracking-wider">
-              Quick Test:
-            </span>
-            {platformExamples.map((platform, idx) => (
-              <button
-                key={idx}
-                id={`btn-sample-${idx}`}
-                onClick={() => handleExampleClick(platform.example)}
-                className="text-[10px] font-semibold px-2 py-0.5 rounded bg-neutral-950 border border-neutral-900/60 text-neutral-400 hover:text-purple-400 hover:border-brand/30 hover:bg-purple-950/10 transition-all duration-300"
-              >
-                {platform.name}
-              </button>
-            ))}
-          </div>
-
-          {/* Supported Platforms Compact Badges */}
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-            <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mr-1 select-none">
-              Supported Platforms:
-            </span>
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-neutral-950 border border-neutral-900/60 text-neutral-300 text-[10px] font-semibold hover:border-brand/20 hover:text-white transition-all duration-300 select-none">
-              <span className="w-1 h-1 rounded-full bg-red-500 animate-pulse" />
-              YouTube
-            </span>
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-neutral-950 border border-neutral-900/60 text-neutral-300 text-[10px] font-semibold hover:border-brand/20 hover:text-white transition-all duration-300 select-none">
-              <span className="w-1 h-1 rounded-full bg-teal-400 animate-pulse" />
-              TikTok
-            </span>
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-neutral-950 border border-neutral-900/60 text-neutral-300 text-[10px] font-semibold hover:border-brand/20 hover:text-white transition-all duration-300 select-none">
-              <span className="w-1 h-1 rounded-full bg-pink-500 animate-pulse" />
-              Instagram
-            </span>
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-neutral-950 border border-neutral-900/60 text-neutral-300 text-[10px] font-semibold hover:border-brand/20 hover:text-white transition-all duration-300 select-none">
-              <span className="w-1 h-1 rounded-full bg-sky-400 animate-pulse" />
-              Twitter / X
-            </span>
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-neutral-950 border border-neutral-900/60 text-neutral-300 text-[10px] font-semibold hover:border-brand/20 hover:text-white transition-all duration-300 select-none">
-              <span className="w-1 h-1 rounded-full bg-purple-500 animate-pulse" />
-              Direct Files
-            </span>
-          </div>
-        </div>
+        <DownloadForm 
+          url={url}
+          setUrl={setUrl}
+          onSubmit={handleFormSubmit}
+          isLoading={isLoading}
+        />
 
         {/* Ads Banner Container - Below Hero */}
         <AdPlaceholder position="below-hero" id="ad-hero" />
@@ -305,7 +157,7 @@ export default function App() {
                   <h3 className="text-xs font-bold text-red-200">Extraction Error</h3>
                   <p className="text-[11px] text-red-400 mt-0.5 leading-relaxed">{error}</p>
                   <p className="text-[10px] text-neutral-500 mt-2 font-medium">
-                    Tip: Verify your link is active, or click one of our "Quick Test" templates above.
+                    Tip: Verify your link is active and public.
                   </p>
                 </div>
               </motion.div>
@@ -331,41 +183,11 @@ export default function App() {
       </main>
 
       {/* Footer Section */}
-      <footer className="bg-black border-t border-neutral-900/80 mt-16">
-        <div className="max-w-7xl mx-auto px-4 py-8 flex flex-col md:flex-row items-center justify-between gap-6">
-          {/* Brand and Copy */}
-          <div className="text-center md:text-left">
-            <span className="font-extrabold text-sm text-white tracking-tight">
-              Flex<span className="text-brand">DL</span>
-            </span>
-            <p className="text-xs text-neutral-500 mt-1">
-              &copy; 2026 FlexDL. Built with 100% cloud privacy.
-            </p>
-          </div>
-
-          {/* Legal / Contact buttons list */}
-          <div className="flex flex-wrap items-center justify-center gap-6 text-xs text-neutral-400">
-            <button 
-              onClick={() => setIsTermsOpen(true)}
-              className="hover:text-purple-400 transition-colors duration-200"
-            >
-              Terms of Service
-            </button>
-            <button 
-              onClick={() => setIsPrivacyOpen(true)}
-              className="hover:text-purple-400 transition-colors duration-200"
-            >
-              Privacy Policy
-            </button>
-            <button 
-              onClick={() => setIsContactOpen(true)}
-              className="hover:text-purple-400 transition-colors duration-200"
-            >
-              Contact Support
-            </button>
-          </div>
-        </div>
-      </footer>
+      <Footer 
+        onTermsClick={() => setIsTermsOpen(true)}
+        onPrivacyClick={() => setIsPrivacyOpen(true)}
+        onContactClick={() => setIsContactOpen(true)}
+      />
 
       {/* COMPLIANCE OVERLAY MODAL: Terms of Service */}
       <AnimatePresence>
@@ -377,7 +199,7 @@ export default function App() {
               animate={{ opacity: 0.6 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsTermsOpen(false)}
-              className="absolute inset-0 bg-black"
+              className="absolute inset-0 bg-black cursor-pointer"
             />
             
             {/* Modal Body */}
@@ -390,7 +212,7 @@ export default function App() {
             >
               <button 
                 onClick={() => setIsTermsOpen(false)}
-                className="absolute top-4 right-4 p-1 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-900"
+                className="absolute top-4 right-4 p-1 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-900 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -420,7 +242,7 @@ export default function App() {
               animate={{ opacity: 0.6 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsPrivacyOpen(false)}
-              className="absolute inset-0 bg-black"
+              className="absolute inset-0 bg-black cursor-pointer"
             />
             
             {/* Modal Body */}
@@ -433,7 +255,7 @@ export default function App() {
             >
               <button 
                 onClick={() => setIsPrivacyOpen(false)}
-                className="absolute top-4 right-4 p-1 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-900"
+                className="absolute top-4 right-4 p-1 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-900 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -462,7 +284,7 @@ export default function App() {
               animate={{ opacity: 0.6 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsContactOpen(false)}
-              className="absolute inset-0 bg-black"
+              className="absolute inset-0 bg-black cursor-pointer"
             />
             
             {/* Modal Body */}
@@ -475,7 +297,7 @@ export default function App() {
             >
               <button 
                 onClick={() => setIsContactOpen(false)}
-                className="absolute top-4 right-4 p-1 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-900"
+                className="absolute top-4 right-4 p-1 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-900 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -528,7 +350,7 @@ export default function App() {
                   <button
                     type="submit"
                     id="btn-contact-submit"
-                    className="w-full h-11 bg-brand hover:bg-brand-hover text-white text-sm font-bold rounded-xl shadow-md shadow-brand/10 hover:shadow-brand/20 transition-all flex items-center justify-center gap-2 select-none"
+                    className="w-full h-11 bg-brand hover:bg-brand-hover text-white text-sm font-bold rounded-xl shadow-md shadow-brand/10 hover:shadow-brand/20 transition-all flex items-center justify-center gap-2 select-none cursor-pointer"
                   >
                     Transmit Message
                     <Send className="w-4 h-4" />
